@@ -1,0 +1,56 @@
+// import React from 'react'
+// import Header from './header'
+// import Banner from './Banner'
+// import BooksSection from './BooksSection'
+// import Footer from './Footer'
+
+// function Home() {
+//   return (
+//    <>
+
+//         <Header />
+//         <Banner />
+//         <BooksSection title="New Arrivals"  />
+//         <BooksSection title="Trending now"  />
+//         <BooksSection title="Bestselling "  />
+//         <BooksSection title="Popular "  />
+//         <Footer/>
+
+//    </>
+//   )
+// }
+
+// export default Home
+
+import React from "react";
+import Header from "./header";
+import Banner from "./Banner";
+import BooksSection from "./BooksSection";
+import Footer from "./Footer";
+
+function Home() {
+  return (
+    <>
+      {/* Header */}
+      <Header />
+
+      {/* Hero / Banner */}
+      <section>
+        <Banner />
+      </section>
+
+      {/* Book Sections */}
+      <main className="space-y-12 px-4 sm:px-6 lg:px-12 py-10">
+        <BooksSection title="New Arrivals" />
+        <BooksSection title="Trending Now" />
+        <BooksSection title="Bestselling" />
+        <BooksSection title="Popular" />
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </>
+  );
+}
+
+export default Home;
