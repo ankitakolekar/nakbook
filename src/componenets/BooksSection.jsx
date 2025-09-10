@@ -1,93 +1,25 @@
-// import { useContext } from "react";
-// import { Link, Links } from "react-router-dom";
-// import { usercontext } from "../utils/Context";
-
-
-
-
-
-//   const BookCard = ({ title, price, originalPrice }) => (
-
-//     <div className="max-w-sm bg-white rounded-xl shadow-md p-4 relative">
-
-//         <div className="absolute top-2 left-2 bg-yellow-400 text-black text-sm font-bold rounded-full px-2 py-1">
-//           -30%
-//         </div>
-//         <br />
-//         <div class="flex flex-col items-center">
-//             <img src="/path/to/book-banner.jpg"  className="rounded-lg w-[300px] object-cover h-[300px] bg-yellow-200" />
-//             {
-//             /*  */}
-
-//         </div>
-
-//         <div class="mt-4 text-xs text-gray-700 border-t pt-2">
-//           {/* <div class="text-red-600 font-medium">Nakbook.com</div>
-//           <div>शैक्षणिक क्षेत्रातील सर्व काही...</div>
-//           <div class="mt-1">📞 0241 3590019</div> */}
-//           <div class="mt-4 w-full text-left space-y-2">
-              
-//               <p class="text-gray-800 font-semibold leading-snug text-base">
-//                 सहामाही चालू घडामोडी (जानेवारी ते जून 2025) – देवाकर जाधवर
-//               </p>
-//               <div class="flex items-center text-yellow-400 text-2xl">
-//                 ★★★★★
-//                 <span class="text-gray-500 ml-1 text-xs">(0)</span>
-//               </div>
-//               <div class="flex items-center gap-2">
-//                 <p class="text-[#051d38] text-2xl font-bold">₹182/-</p>
-//                 <p class="text-gray-500 line-through">₹260.00</p>
-//               </div>
-
-//             </div>
-//         </div>
-
-//     </div>
-
-//   );
-
-//   const BooksSection = ({ title }) => {
-    
-//     const [data,setdata] = useContext(usercontext);
-//     // console.log(data);
-
-//     return (
-//       <section className="p-4">
-//         <div className="w-full h-[52px] mb-[44px] flex items-center ">
-//         <h2 className="text-4xl font-semibold h=[42px] py-1 ml-[40px]">{title}&nbsp;Book</h2>
-//         <hr className="w-[50%] ml-[44px]" />
-
-//         <Link to="" className="ml-[44px]">
-//           <div className="inline-block bg-[#011E41] text-white font-semibold px-6 py-2 rounded-full hover:bg-[#022c5a] transition-all duration-300">
-//             View All &gt;
-//           </div>
-//         </Link>
-
-//         </div>
-
-//         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-//           {
-//             data.map((data, index) => (
-//               <Link to={`/details/${data.id}`}>
-//                 <BookCard key={index} {...data} />
-//               </Link>
-//             ))
-//           }
-//         </div>
-//       </section>
-//     );
-//   };
-
-//   export default BooksSection;
-  
 import { useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FaRegHeart, FaHeart, FaEye, FaCartPlus } from "react-icons/fa";
-import { Link } from "react-router-dom";
 import { usercontext } from "../utils/Context";
 
+import banner_one from "../assets/images/banner_one.jpg";
+import banner_two from "../assets/images/banner_two.png";
+import banner_three from "../assets/images/banner_three.jpg";
+
 // 🎴 Book Card
-const BookCard = ({ id, title, price, originalPrice, discount, image, isWishlisted, onToggleWishlist, onAddToCart, onView }) => {
+const BookCard = ({
+  id,
+  title,
+  price,
+  originalPrice,
+  discount,
+  image,
+  isWishlisted,
+  onToggleWishlist,
+  onAddToCart,
+  onView,
+}) => {
   const [wishBump, setWishBump] = useState(false);
   const [viewBump, setViewBump] = useState(false);
   const [cartBump, setCartBump] = useState(false);
@@ -96,10 +28,9 @@ const BookCard = ({ id, title, price, originalPrice, discount, image, isWishlist
     setter(true);
     setTimeout(() => setter(false), 220);
   };
+
   return (
-  <div
-      className="relative group w-full rounded-xl overflow-hidden bg-white shadow transition-shadow duration-300 ease-out hover:shadow-2xl focus-within:shadow-2xl"
-    >
+    <div className="relative group w-full rounded-xl overflow-hidden bg-white shadow transition-shadow duration-300 ease-out hover:shadow-2xl focus-within:shadow-2xl">
       {/* Discount Badge */}
       {discount && (
         <div className="absolute top-2 left-2 bg-yellow-400 text-black text-sm font-bold rounded-full px-2 py-1">
@@ -107,23 +38,37 @@ const BookCard = ({ id, title, price, originalPrice, discount, image, isWishlist
         </div>
       )}
 
-    {/* Action Icons */}
-  <div className="hidden sm:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out">
+      {/* Action Icons */}
+      <div className="hidden sm:flex absolute top-2 right-2 flex-col gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 ease-out">
         <button
           type="button"
           title={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); bump(setWishBump); onToggleWishlist?.({ id, title, price, originalPrice, image }); }}
-      className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${wishBump ? 'animate-pop' : ''}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            bump(setWishBump);
+            onToggleWishlist?.({ id, title, price, originalPrice, image });
+          }}
+          className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${wishBump ? "animate-pop" : ""}`}
         >
-          {isWishlisted ? <FaHeart className="text-red-500" /> : <FaRegHeart className="text-gray-700" />}
+          {isWishlisted ? (
+            <FaHeart className="text-red-500" />
+          ) : (
+            <FaRegHeart className="text-gray-700" />
+          )}
         </button>
         <button
           type="button"
           title="View"
           aria-label="View"
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); bump(setViewBump); onView?.(id); }}
-      className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${viewBump ? 'animate-pop' : ''}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            bump(setViewBump);
+            onView?.(id);
+          }}
+          className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${viewBump ? "animate-pop" : ""}`}
         >
           <FaEye className="text-gray-700" />
         </button>
@@ -131,36 +76,39 @@ const BookCard = ({ id, title, price, originalPrice, discount, image, isWishlist
           type="button"
           title="Add to cart"
           aria-label="Add to cart"
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); bump(setCartBump); onAddToCart?.({ id, title, price, originalPrice, image }); }}
-      className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${cartBump ? 'animate-pop' : ''}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            bump(setCartBump);
+            onAddToCart?.({ id, title, price, originalPrice, image });
+          }}
+          className={`w-8 h-8 rounded-full bg-white shadow flex items-center justify-center hover:bg-gray-50 transition-transform duration-200 hover:scale-110 active:scale-95 ${cartBump ? "animate-pop" : ""}`}
         >
           <FaCartPlus className="text-gray-700" />
         </button>
       </div>
 
       {/* Book Image */}
-    <div className="flex flex-col items-center">
-            <img
-              src={image || "https://www.nakbook.com/wp-content/uploads/2023/09/Photo_1695140150637-768x768.jpg"}
+      <div className="flex flex-col items-center">
+        <img
+          src={image || "https://www.nakbook.com/wp-content/uploads/2023/09/Photo_1695140150637-768x768.jpg"}
           alt={title}
-      className="rounded-lg w-full aspect-[3/4] object-cover bg-gray-100"
+          className="rounded-lg w-full aspect-[3/4] object-cover bg-gray-100"
         />
       </div>
 
       {/* Book Info */}
-  <div className="mt-2 sm:mt-3 text-xs text-gray-700 pt-2 space-y-2 text-left">
-  <p className="text-gray-800 font-semibold leading-snug text-xs sm:text-sm line-clamp-2">
+      <div className="mt-2 sm:mt-3 text-xs text-gray-700 pt-2 space-y-2 text-left">
+        <p className="text-gray-800 font-semibold leading-snug text-xs sm:text-sm line-clamp-2">
           {title}
         </p>
-
         {/* Ratings */}
-  <div className="flex items-center text-yellow-400 text-[10px] sm:text-sm">
-                ★★★★★ <span className="text-gray-500 ml-1 text-xs">(0)</span>
+        <div className="flex items-center text-yellow-400 text-[10px] sm:text-sm">
+          ★★★★★ <span className="text-gray-500 ml-1 text-xs">(0)</span>
         </div>
-
         {/* Price */}
         <div className="flex items-center gap-2">
-                <p className="text-[#051d38] text-xs sm:text-base font-bold">₹{price}/-</p>
+          <p className="text-[#051d38] text-xs sm:text-base font-bold">₹{price}/-</p>
           {originalPrice && (
             <p className="text-gray-500 line-through">₹{originalPrice}</p>
           )}
@@ -169,6 +117,27 @@ const BookCard = ({ id, title, price, originalPrice, discount, image, isWishlist
     </div>
   );
 };
+
+/* 🔹 Banner Cards */
+export const BannerCards = () => (
+  <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6 bg-white">
+    {/* Left Side - Two Cards */}
+    <div className="flex flex-col sm:flex-row gap-6">
+      {/* Card 1 */}
+      <div className="bg-white rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
+        <img src={banner_one} alt="banner one" className="rounded-md w-full object-cover" />
+      </div>
+      {/* Card 2 */}
+      <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
+        <img src={banner_two} alt="banner two" className="rounded-md w-full object-cover" />
+      </div>
+    </div>
+    {/* Right Side - Single Card */}
+    <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
+      <img src={banner_three} alt="banner three" className="rounded-md w-full object-cover" />
+    </div>
+  </div>
+);
 
 // 📚 Books Section
 const BooksSection = ({ title }) => {
@@ -219,7 +188,7 @@ const BooksSection = ({ title }) => {
   const scrollerRef = useRef(null);
 
   const scrollByAmount = (dir = 1) => {
-    const el = scrollerRef.current; 
+    const el = scrollerRef.current;
     if (!el) return;
     const amount = Math.max(160, Math.floor(el.clientWidth * 0.9));
     el.scrollBy({ left: dir * amount, behavior: "smooth" });
@@ -274,27 +243,29 @@ const BooksSection = ({ title }) => {
 
     const pauseAndResume = () => pauseAuto(AUTO_RESUME_DELAY_MS);
 
-    el.addEventListener('pointerdown', pauseAndResume, { passive: true });
-    el.addEventListener('wheel', pauseAndResume, { passive: true });
-    el.addEventListener('touchstart', pauseAndResume, { passive: true });
+    el.addEventListener("pointerdown", pauseAndResume, { passive: true });
+    el.addEventListener("wheel", pauseAndResume, { passive: true });
+    el.addEventListener("touchstart", pauseAndResume, { passive: true });
 
     return () => {
       stopAuto();
-      el.removeEventListener('pointerdown', pauseAndResume);
-      el.removeEventListener('wheel', pauseAndResume);
-      el.removeEventListener('touchstart', pauseAndResume);
+      el.removeEventListener("pointerdown", pauseAndResume);
+      el.removeEventListener("wheel", pauseAndResume);
+      el.removeEventListener("touchstart", pauseAndResume);
     };
-  }, [data.length]);
+  }, []);
 
   return (
     <section className="p-4 sm:p-6">
+      <BannerCards />
       {/* Section Heading */}
       <div className="flex flex-col md:flex-row items-center justify-between mb-8">
         <h2 className="text-3xl md:text-4xl font-semibold">{title} Books</h2>
-        <Link to="/books">
-          <div className="mt-4 md:mt-0 inline-block bg-[#011E41] text-white font-semibold px-6 py-2 rounded-full hover:bg-[#022c5a] transition-all duration-300">
-            View All &gt;
-          </div>
+        <Link
+          to={`/AllBooksPage/${title.toLowerCase().replace(/\s+/g, "-")}`}
+          className="mt-4 md:mt-0 inline-block bg-[#011E41] text-white font-semibold px-6 py-2 rounded-full hover:bg-[#022c5a] transition-all duration-300"
+        >
+          View All &gt;
         </Link>
       </div>
 
@@ -308,7 +279,11 @@ const BooksSection = ({ title }) => {
             onPointerDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => { e.stopPropagation(); pauseAuto(); scrollByAmount(-1); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              pauseAuto();
+              scrollByAmount(-1);
+            }}
             className="pointer-events-auto flex w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white shadow border border-gray-200 items-center justify-center"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -346,7 +321,11 @@ const BooksSection = ({ title }) => {
             onPointerDown={(e) => e.stopPropagation()}
             onTouchStart={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => { e.stopPropagation(); pauseAuto(); scrollByAmount(1); }}
+            onClick={(e) => {
+              e.stopPropagation();
+              pauseAuto();
+              scrollByAmount(1);
+            }}
             className="pointer-events-auto flex w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/90 hover:bg-white shadow border border-gray-200 items-center justify-center"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
