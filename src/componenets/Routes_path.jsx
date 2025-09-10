@@ -55,6 +55,7 @@ import Product from "./Product";
 import Checkout from "./Checkout";
 import Login from "./Login";
 import SignUp from "./SignUp";
+import Dashboard from "./Dashboard";
 
 function Routes_path() {
   return (
@@ -72,6 +73,7 @@ function Routes_path() {
       <Route path="/my-account" element={<MyAccount />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+  <Route path="/dashboard" element={<Dashboard />} />
 
       {/* User actions */}
       <Route path="/favorites" element={<Favorites />} />

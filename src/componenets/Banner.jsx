@@ -91,7 +91,7 @@ function Banner() {
   return (
     <>
       {/* 🔹 Slider Section */}
-      <div className="h-[250px] sm:h-[350px] md:h-[475px] w-full">
+  <div className="h-[250px] sm:h-[350px] md:h-[475px] w-full max-w-full overflow-hidden">
         <a
           href="https://www.nakbook.com/product-category/vanrakshak/"
           tabIndex={0}
@@ -135,37 +135,7 @@ function Banner() {
       </div>
 
       {/* 🔹 Banner Cards */}
-      <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6 bg-white">
-        {/* Left Side - Two Cards */}
-        <div className="flex flex-col sm:flex-row gap-6">
-          {/* Card 1 */}
-          <div className="bg-white rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-            <img
-              src={banner_one}
-              alt="banner one"
-              className="rounded-md w-full object-cover"
-            />
-          </div>
-
-          {/* Card 2 */}
-          <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-            <img
-              src={banner_two}
-              alt="banner two"
-              className="rounded-md w-full object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Right Side - Single Card */}
-        <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-          <img
-            src={banner_three}
-            alt="banner three"
-            className="rounded-md w-full object-cover"
-          />
-        </div>
-      </div>
+      
     </>
   );
 }

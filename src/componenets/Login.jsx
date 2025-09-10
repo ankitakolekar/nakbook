@@ -161,7 +161,7 @@ const Login = () => {
           Welcome Back 👋
         </h2>
         <p className="text-center text-gray-600 mb-6">
-          Login to continue exploring <span className="font-semibold">Nakbook</span>
+          Login with your email and password to continue
         </p>
 
         {/* Form */}
@@ -169,12 +169,12 @@ const Login = () => {
           {/* Email */}
           <div>
             <label className="block text-gray-700 font-medium">
-              Email / Phone Number
+              Email address
             </label>
             <input
               type="email"
               className="w-full px-4 py-2 mt-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Enter your email or phone"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -199,7 +199,7 @@ const Login = () => {
           {/* Errors */}
           {(error || gError) && (
             <p className="text-red-500 text-sm mt-1">
-              {error?.message || gError?.message}
+              {error?.code === 'auth/invalid-credential' ? 'Invalid email or password.' : (error?.message || gError?.message)}
             </p>
           )}
 

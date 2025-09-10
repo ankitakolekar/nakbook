@@ -314,6 +314,7 @@
 
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Header from "./header";
 import PageHeader from "./PageHeader";
 import Footer from "./Footer";
@@ -333,6 +334,7 @@ const Checkout = () => {
   });
 
   const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -372,7 +374,33 @@ const Checkout = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       setErrors([]);
-      alert("🎉 Order placed successfully!");
+      // Build an order from cart (from localStorage)
+      let cart = [];
+      try {
+        cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      } catch {}
+
+      const subtotal = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const shipping = cart.length > 0 ? 19 : 0;
+      const order = {
+        id: Date.now(),
+        items: cart,
+        subtotal,
+        shipping,
+        total: subtotal + shipping,
+        status: "Processing",
+        createdAt: new Date().toISOString(),
+      };
+
+      try {
+        const prev = JSON.parse(localStorage.getItem("orders") || "[]");
+        localStorage.setItem("orders", JSON.stringify([order, ...prev]));
+        // Clear cart after order
+        localStorage.removeItem("cart");
+      } catch {}
+
+      // Navigate to dashboard
+      navigate("/dashboard");
     }
   };
 

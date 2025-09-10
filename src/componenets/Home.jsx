@@ -40,7 +40,7 @@ function Home() {
       </section>
 
       {/* Book Sections */}
-      <main className="space-y-12 px-4 sm:px-6 lg:px-12 py-10">
+  <main className="space-y-10 px-3 sm:px-6 lg:px-12 py-8">
         <BooksSection title="New Arrivals" />
         <BooksSection title="Trending Now" />
         <BooksSection title="Bestselling" />

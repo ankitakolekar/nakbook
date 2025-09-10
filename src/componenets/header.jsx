@@ -221,19 +221,87 @@
 // export default Header
 
 import { Link, NavLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useAuthState } from 'react-firebase-hooks/auth';
 import logo from '../assets/images/logoImage.png';
 import { FaHeart } from "react-icons/fa";
 import { IoMdCall } from "react-icons/io";
 import { MdOutlineShoppingBag, MdAccountCircle } from "react-icons/md";
+import auth from '../firebase.init';
 
 function Header() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false); // Ask for book modal
+  const [updatesOpen, setUpdatesOpen] = useState(false); // Regular Updates dropdown
+  const [helpOpen, setHelpOpen] = useState(false); // Help dropdown
+  const [isHoverable, setIsHoverable] = useState(false); // Desktop hover support
+  const [user] = useAuthState(auth);
+
+  const updatesRef = useRef(null);
+  const helpRef = useRef(null);
+  const updatesCloseTimer = useRef(null);
+  const helpCloseTimer = useRef(null);
+
+  const clearCloseTimer = (which) => {
+    const ref = which === 'updates' ? updatesCloseTimer : helpCloseTimer;
+    if (ref.current) {
+      clearTimeout(ref.current);
+      ref.current = null;
+    }
+  };
+
+  const scheduleClose = (which, delay = 180) => {
+    const ref = which === 'updates' ? updatesCloseTimer : helpCloseTimer;
+    clearCloseTimer(which);
+    ref.current = setTimeout(() => {
+      if (which === 'updates') setUpdatesOpen(false);
+      else setHelpOpen(false);
+    }, delay);
+  };
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const onOutside = (e) => {
+      if (updatesRef.current && !updatesRef.current.contains(e.target)) {
+        setUpdatesOpen(false);
+      }
+      if (helpRef.current && !helpRef.current.contains(e.target)) {
+        setHelpOpen(false);
+      }
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setUpdatesOpen(false);
+        setHelpOpen(false);
+      }
+    };
+    document.addEventListener('click', onOutside, true);
+    document.addEventListener('touchstart', onOutside, true);
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('click', onOutside, true);
+      document.removeEventListener('touchstart', onOutside, true);
+      document.removeEventListener('keydown', onKey, true);
+    };
+  }, []);
+
+  // Detect if device supports hover (desktop/laptop with fine pointer)
+  useEffect(() => {
+    const query = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const update = () => setIsHoverable(query.matches);
+    update();
+    if (typeof query.addEventListener === 'function') {
+      query.addEventListener('change', update);
+      return () => query.removeEventListener('change', update);
+    } else if (typeof query.addListener === 'function') {
+      query.addListener(update);
+      return () => query.removeListener(update);
+    }
+  }, []);
 
   return (
     <>
       {/* Top navigation */}
-      <div className="border-b border-neutral-200 mb-[40px] h-[43px] px-4 py-[11px] text-sm text-gray-700 flex justify-start space-x-6">
+  <div className="border-b border-neutral-200 mb-[40px] h-auto px-4 py-[11px] text-sm text-gray-700 flex flex-wrap justify-start gap-x-6 gap-y-2">
         <NavLink
           to="/MyAccount"
           className={({ isActive }) =>
@@ -279,24 +347,44 @@ function Header() {
       </div>
 
       {/* Bottom navigation */}
-      <div className="flex flex-wrap h-auto items-center justify-center gap-6 px-4 py-3 text-sm font-semibold text-blue-900">
+  <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 px-4 py-3 text-sm font-semibold text-blue-900">
         
-        <Link to="/MyOrders" className="hover:underline">My Orders</Link>
-        <Link to="/MyAccount" className="hover:underline">Profile</Link>
+  <Link to="/dashboard" className="hover:underline">Dashboard</Link>
+  <Link to="/MyOrders" className="hover:underline">My Orders</Link>
+        <Link to="/dashboard" className="hover:underline">Profile</Link>
 
         {/* Regular Updates dropdown */}
-        <div className="relative group">
-          <button className="hover:underline flex items-center">
+        <div
+          className="relative"
+          ref={updatesRef}
+          onMouseEnter={isHoverable ? () => { clearCloseTimer('updates'); setUpdatesOpen(true); setHelpOpen(false); } : undefined}
+          onMouseLeave={isHoverable ? () => scheduleClose('updates') : undefined}
+        >
+          <button
+            className="hover:underline flex items-center"
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setUpdatesOpen((v) => !v); setHelpOpen(false); }}
+            aria-haspopup="menu"
+            aria-expanded={updatesOpen}
+          >
             Regular Updates
             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div className="absolute left-0 mt-2 w-60 bg-white border rounded shadow-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-            <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">Telegram</a>
-            <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">Instagram</a>
-            <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">WhatsApp</a>
-          </div>
+          {updatesOpen && (
+            <div
+              className="absolute left-0 sm:left-0 mt-2 w-60 max-w-[90vw] bg-white border rounded shadow-lg p-2 z-50"
+              role="menu"
+              onClick={(e) => e.stopPropagation()}
+              onMouseEnter={isHoverable ? () => clearCloseTimer('updates') : undefined}
+              onMouseLeave={isHoverable ? () => scheduleClose('updates') : undefined}
+            >
+              <a href="https://t.me/" target="_blank" rel="noreferrer" role="menuitem" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">Telegram</a>
+              <a href="https://www.instagram.com/" target="_blank" rel="noreferrer" role="menuitem" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">Instagram</a>
+              <a href="https://wa.me/" target="_blank" rel="noreferrer" role="menuitem" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">WhatsApp</a>
+            </div>
+          )}
         </div>
 
         {/* Ask for book modal trigger */}
@@ -305,31 +393,48 @@ function Header() {
         </button>
 
         {/* Help dropdown */}
-        <div className="relative group">
-          <button className="hover:underline flex items-center">
+        <div
+          className="relative"
+          ref={helpRef}
+          onMouseEnter={isHoverable ? () => { clearCloseTimer('help'); setHelpOpen(true); setUpdatesOpen(false); } : undefined}
+          onMouseLeave={isHoverable ? () => scheduleClose('help') : undefined}
+        >
+          <button
+            className="hover:underline flex items-center"
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setHelpOpen((v) => !v); setUpdatesOpen(false); }}
+            aria-haspopup="menu"
+            aria-expanded={helpOpen}
+          >
             Help
             <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
-          <div className="absolute left-0 mt-2 w-60 bg-white border rounded shadow-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity z-50">
-            <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">ऑर्डर कशी करावी?</a>
-            <a href="#" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">पार्सल ट्रॅकिंग कशी करावी?</a>
-          </div>
+          {helpOpen && (
+            <div
+              className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-60 max-w-[90vw] bg-white border rounded shadow-lg p-2 z-50"
+              role="menu"
+              onClick={(e) => e.stopPropagation()}
+              onMouseEnter={isHoverable ? () => clearCloseTimer('help') : undefined}
+              onMouseLeave={isHoverable ? () => scheduleClose('help') : undefined}
+            >
+              <a href="#" role="menuitem" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">ऑर्डर कशी करावी?</a>
+              <a href="#" role="menuitem" className="block px-4 py-2 text-blue-900 hover:bg-gray-100">पार्सल ट्रॅकिंग कशी करावी?</a>
+            </div>
+          )}
         </div>
 
-        <Link to="/BooksListing" className="hover:underline">Bookshelf (All Books)</Link>
+  <Link to="/books" className="hover:underline">Bookshelf (All Books)</Link>
 
         {/* Right section with Account & Contact */}
         <div className="ml-auto flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
+          <Link to={user ? "/dashboard" : "/login"} className="flex items-center space-x-2">
             <div className="bg-green-600 text-white rounded-full w-8 h-8 flex items-center justify-center">
               <MdAccountCircle className="w-full h-full" />
             </div>
-            <Link to="/Login">
-              <span className="text-green-700 font-bold">Account</span>
-            </Link>
-          </div>
+            <span className="text-green-700 font-bold">Account</span>
+          </Link>
           <div className="flex items-center space-x-2">
             <div className="bg-gray-200 rounded-full p-2">
               <IoMdCall className="w-[25px] h-[25px] fill-[#051d38]" />

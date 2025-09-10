@@ -77,15 +77,23 @@
 // export default SignUp;
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { updateProfile } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
+import auth from "../firebase.init";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
     name: "",
-    phoneOrEmail: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
+
+  const navigate = useNavigate();
+  const [createUserWithEmailAndPassword, user, loading, error] =
+    useCreateUserWithEmailAndPassword(auth);
 
   const handleChange = (e) => {
     setFormData({
@@ -94,12 +102,12 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const { name, phoneOrEmail, password, confirmPassword } = formData;
+    const { name, email, password, confirmPassword } = formData;
 
-    if (!name || !phoneOrEmail || !password || !confirmPassword) {
+    if (!name || !email || !password || !confirmPassword) {
       alert("⚠️ Please fill all required fields!");
       return;
     }
@@ -109,9 +117,26 @@ const SignUp = () => {
       return;
     }
 
-    // 👉 Here you can call your Firebase or API registration function
-    console.log("Registering User:", formData);
+    // Basic email format check
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    // Create user in Firebase
+    const cred = await createUserWithEmailAndPassword(email, password);
+    if (cred && cred.user) {
+      try {
+        await updateProfile(cred.user, { displayName: name });
+      } catch {}
+      navigate("/dashboard");
+    }
   };
+
+  // If already created, navigate away
+  useEffect(() => {
+    if (user) navigate("/dashboard");
+  }, [user, navigate]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
@@ -120,7 +145,7 @@ const SignUp = () => {
           Create Account
         </h2>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
+  <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -137,17 +162,17 @@ const SignUp = () => {
             />
           </div>
 
-          {/* Phone / Email */}
+      {/* Email */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email / Phone Number <span className="text-red-500">*</span>
+        Email address <span className="text-red-500">*</span>
             </label>
             <input
-              type="text"
-              name="phoneOrEmail"
-              value={formData.phoneOrEmail}
+        type="email"
+        name="email"
+        value={formData.email}
               onChange={handleChange}
-              placeholder="Enter your email or phone"
+        placeholder="Enter your email"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-800 outline-none"
               required
             />
@@ -198,13 +223,28 @@ const SignUp = () => {
             .
           </p>
 
+          {/* Errors */}
+          {error && (
+            <p className="text-sm text-red-600">{error.message}</p>
+          )}
+
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full py-3 bg-[#05264E] text-white font-semibold rounded-full hover:bg-[#041d3d] transition"
+            disabled={loading}
+            className={`w-full py-3 text-white font-semibold rounded-full transition ${
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#05264E] hover:bg-[#041d3d]"
+            }`}
           >
-            Register
+            {loading ? "Creating account..." : "Register"}
           </button>
+
+          <p className="text-center text-sm text-gray-600">
+            Already have an account? {" "}
+            <Link to="/login" className="text-blue-700 hover:underline font-medium">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>
