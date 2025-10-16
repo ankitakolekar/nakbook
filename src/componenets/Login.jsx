@@ -31,7 +31,7 @@ const Login = () => {
   // Redirect after login
   useEffect(() => {
     if (user || gUser) {
-      navigate("/dashboard"); // change this route based on your app
+      navigate("/"); // change this route based on your app
     }
   }, [user, gUser, navigate]);
 

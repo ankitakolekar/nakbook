@@ -15,12 +15,15 @@
 
 import React from "react";
 import Routes_path from './componenets/Routes_path';
-import FloatingButton from "./componenets/FloatingButton"; // ✅ import here
+import FloatingButton from "./componenets/FloatingButton"; 
+
 
 function App() {
   return (
     <div className="relative">
       <Routes_path />   {/* ✅ all your routes */}
+
+  
       <FloatingButton /> {/* ✅ floating button on all pages */}
     </div>
   );
