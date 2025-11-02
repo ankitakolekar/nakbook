@@ -53,27 +53,34 @@ const CATEGORIES = [
   "zilha parishad",
 ];
 
-const PRODUCTS = Array.from({ length: 56 }).map((_, i) => ({
-  id: i + 1,
-  title:
-    i % 3 === 0
-      ? "101 प्रश्नसंच 2007 ते 2023 पर्यंत झालेल्या परीक्षांसाठी"
-      : i % 3 === 1
-      ? "100 जम्बो पोलीस भरती – सिद्धेश्वर हाडवळ"
-      : "21 अपेक्षित प्रश्नसंच द्वितीय खाटोळे सर स्टेप",
-  image:
-    i % 4 === 0
-      ? "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600"
-      : i % 4 === 1
-      ? "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=600"
-      : i % 4 === 2
-      ? "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=600"
-      : "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=600",
-  rating: Math.floor(Math.random() * 5),
-  price: [99, 180, 225, 195, 367, 65, 196, 299, 325][i % 9],
-  oldPrice: [170, 240, 450, 390, 525, 130, 280, 435, 650][i % 9],
-  discount: [-42, -25, -50, -40, -30, -50, -31, -50, -30][i % 9],
-}));
+const PRODUCTS = Array.from({ length: 56 }).map((_, i) => {
+  // Assign categories to products in a distributed manner
+  const categoryIndex = i % CATEGORIES.length;
+  const category = CATEGORIES[categoryIndex];
+  
+  return {
+    id: i + 1,
+    title:
+      i % 3 === 0
+        ? "101 प्रश्नसंच 2007 ते 2023 पर्यंत झालेल्या परीक्षांसाठी"
+        : i % 3 === 1
+        ? "100 जम्बो पोलीस भरती – सिद्धेश्वर हाडवळ"
+        : "21 अपेक्षित प्रश्नसंच द्वितीय खाटोळे सर स्टेप",
+    image:
+      i % 4 === 0
+        ? "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=600"
+        : i % 4 === 1
+        ? "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=600"
+        : i % 4 === 2
+        ? "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=600"
+        : "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=600",
+    rating: Math.floor(Math.random() * 5),
+    price: [99, 180, 225, 195, 367, 65, 196, 299, 325][i % 9],
+    oldPrice: [170, 240, 450, 390, 525, 130, 280, 435, 650][i % 9],
+    discount: [-42, -25, -50, -40, -30, -50, -31, -50, -30][i % 9],
+    category: category,
+  };
+});
 
 /* --------------------------- UTILITIES --------------------------- */
 const sortProducts = (list, sortKey) => {
@@ -247,10 +254,16 @@ const BooksListing = () => {
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
-    let list = PRODUCTS.filter((p) => p.price <= price);
+    let list = PRODUCTS;
+    
+    // Filter by selected categories
     if (selectedCategories.length > 0) {
-      list = list.filter((_, i) => i % 2 === 0); // demo
+      list = list.filter((product) => selectedCategories.includes(product.category));
     }
+    
+    // Filter by price
+    list = list.filter((p) => p.price <= price);
+    
     return sortProducts(list, sort);
   }, [price, sort, selectedCategories]);
 
