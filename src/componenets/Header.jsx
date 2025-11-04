@@ -814,18 +814,22 @@ function Header() {
 
       {/* Mobile Search */}
       <div className="md:hidden px-4 py-2 border-b border-gray-200">
-        <div className="relative w-full">
-          <input
-            type="text"
-            value={mobileInput}
-            onChange={handleMobileChange}
-            onKeyDown={handleMobileKeyDown}
-            placeholder="Search products..."
-            className="w-full border rounded-full pl-4 pr-10 py-2 bg-gray-100"
-          />
-          <button className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-600">
-            🔍
-          </button>
+       <div className="flex items-center w-full max-w-[600px] bg-gray-100 rounded-full overflow-hidden shadow-sm">
+  <input
+    type="text"
+    value={inputValue}
+    onChange={handleChange}
+    onKeyDown={handleKeyDown}
+    placeholder="Search products..."
+    className="flex-grow bg-gray-100 text-gray-700 placeholder-gray-500 text-base px-6 py-3 outline-none"
+  />
+  <button
+    className="flex items-center justify-center w-12 h-12 bg-[#0b1e3f] hover:bg-[#122c5a] text-white rounded-full transition-all duration-200 mr-2"
+  >
+    🔍
+  </button>
+
+          
           {mobileFiltered.length > 0 && (
             <ul className="absolute left-0 top-full mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto">
               {mobileFiltered.map((name, index) => (

@@ -1,52 +1,19 @@
-// import React from 'react'
-// import banner_one from "../assets/images/banner_one.jpg";
-// import banner_two from "../assets/images/banner_two.png";
-// import banner_three from "../assets/images/banner_three.jpg";
-
-// function BannerCards () {
-//   return (
-//     <div className="flex flex-col md:flex-row justify-center items-center gap-6 p-6 bg-white">
-//     {/* Left Side - Two Cards */}
-//     <div className="flex flex-col sm:flex-row gap-6">
-//       <div className="bg-white rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-//         <img src={banner_one} alt="banner one" className="rounded-md w-full object-cover" />
-//       </div>
-//       <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-//         <img src={banner_two} alt="banner two" className="rounded-md w-full object-cover" />
-//       </div>
-//     </div>
-
-//     {/* Right Side - Single Card */}
-//     <div className="bg-[#d2ecec] rounded-xl shadow-md p-4 w-full sm:w-[250px] flex items-center justify-center">
-//       <img src={banner_three} alt="banner three" className="rounded-md w-full object-cover" />
-//     </div>
-//   </div>
-//   )
-// }
-
-// export default BannerCards 
-
-
 import React, { useState, useEffect } from "react";
 import banner_one from "../assets/images/banner_one.jpg";
 
 function BannerCards() {
-  // State for countdown timer
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 59,
-    seconds: 59
+    seconds: 59,
   });
 
-  // Countdown timer effect
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prevTime) => {
         let { hours, minutes, seconds } = prevTime;
-        
-        if (seconds > 0) {
-          seconds--;
-        } else if (minutes > 0) {
+        if (seconds > 0) seconds--;
+        else if (minutes > 0) {
           minutes--;
           seconds = 59;
         } else if (hours > 0) {
@@ -54,69 +21,69 @@ function BannerCards() {
           minutes = 59;
           seconds = 59;
         } else {
-          // Reset to 24 hours when timer reaches 0
           hours = 23;
           minutes = 59;
           seconds = 59;
         }
-        
         return { hours, minutes, seconds };
       });
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
-  // Format time to always show 2 digits
-  const formatTime = (time) => String(time).padStart(2, '0');
+  const formatTime = (time) => String(time).padStart(2, "0");
 
   return (
-    <div className="flex justify-center items-center p-6 bg-gradient-to-r from-orange-50 to-yellow-50">
-      {/* Offer Banner Card */}
-      <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden max-w-4xl w-full">
+    <div className="flex justify-center items-center p-3 sm:p-6 bg-gradient-to-r from-orange-50 to-yellow-50">
+      <div className="relative bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl">
         {/* Daily Deal Sticker */}
-        <div className="absolute top-4 right-4 z-10 bg-gradient-to-br from-red-500 to-orange-600 text-white rounded-full w-24 h-24 flex items-center justify-center shadow-lg transform rotate-12">
+        <div className="absolute top-3 right-3 z-10 bg-gradient-to-br from-red-500 to-orange-600 text-black rounded-full w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center shadow-lg transform rotate-12">
           <div className="text-center -rotate-12">
-            <p className="text-xs font-bold uppercase">Daily</p>
-            <p className="text-lg font-extrabold leading-none">Deal</p>
+            <p className="text-[8px] sm:text-[10px] font-bold uppercase">Daily</p>
+            <p className="text-sm sm:text-lg font-extrabold leading-none">Deal</p>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-stretch">
+        {/* Main Layout — stays side-by-side even on mobile */}
+        <div className="flex flex-row items-stretch">
           {/* Left Side - Book Image */}
-          <div className="md:w-2/5 bg-gradient-to-br from-purple-100 to-blue-100 p-8 flex items-center justify-center">
-            <div className="relative">
-              <img 
-                src={banner_one} 
-                alt="Featured Book" 
-                className="rounded-lg shadow-xl max-h-80 object-contain transform hover:scale-105 transition-transform duration-300" 
-              />
-            </div>
+          <div className="w-[45%] sm:w-2/5 bg-gradient-to-br from-purple-100 to-blue-100 p-2 sm:p-6 flex items-center justify-center">
+            <img
+              src={banner_one}
+              alt="Featured Book"
+              className="rounded-lg shadow-xl w-full h-auto object-contain max-h-48 sm:max-h-80 transform hover:scale-105 transition-transform duration-300"
+            />
           </div>
 
           {/* Right Side - Book Details */}
-          <div className="md:w-3/5 p-8 flex flex-col justify-center space-y-4">
-            {/* Book Title */}
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
+          <div className="w-[55%] sm:w-3/5 p-3 sm:p-8 flex flex-col justify-center space-y-3 sm:space-y-4">
+            {/* Title */}
+            <h2 className="text-xl sm:text-4xl font-bold text-gray-800 leading-tight">
               The Great Adventure
             </h2>
 
-            {/* Price */}
-            <div className="flex items-center gap-3">
-              <span className="text-3xl font-bold text-orange-600">Rs.19.99</span>
-              <span className="text-xl text-gray-400 line-through">Rs.99.99</span>
-              <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+            {/* Price Section */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              <span className="text-lg sm:text-3xl font-bold text-orange-600">
+                Rs.19.99
+              </span>
+              <span className="text-base sm:text-xl text-gray-400 line-through">
+                Rs.99.99
+              </span>
+              <span className="bg-green-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-semibold">
                 50% OFF
               </span>
             </div>
 
             {/* Reviews */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <div className="flex items-center">
                 {[...Array(5)].map((_, index) => (
                   <svg
                     key={index}
-                    className={`w-5 h-5 ${index < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
+                    className={`w-3 h-3 sm:w-5 sm:h-5 ${
+                      index < 4 ? "text-yellow-400" : "text-gray-300"
+                    }`}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -124,36 +91,34 @@ function BannerCards() {
                   </svg>
                 ))}
               </div>
-              <span className="text-gray-600 text-sm">(4.0) 1,234 reviews</span>
-            </div>
-
-            {/* Learn More Button */}
-            <div>
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-black px-8 py-3 rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-                Learn More
-              </button>
+              <span className="text-gray-600 text-xs sm:text-sm">
+                (4.0) 1,234 reviews
+              </span>
             </div>
 
             {/* Timer */}
-            <div className="border-t pt-4 mt-4">
-              <p className="text-gray-600 text-sm mb-2 font-medium">Offer ends in:</p>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-2">
-                  <div className="bg-gray-800 text-white px-4 py-3 rounded-lg text-center min-w-[60px]">
-                    <div className="text-2xl font-bold">{formatTime(timeLeft.hours)}</div>
-                    <div className="text-xs text-gray-400">Hours</div>
+            <div className="border-t pt-2 sm:pt-4 mt-2 sm:mt-4">
+              <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2 font-medium">
+                Offer ends in:
+              </p>
+              <div className="flex items-center gap-1 sm:gap-3 flex-wrap">
+                {["hours", "minutes", "seconds"].map((unit, i) => (
+                  <div key={i} className="flex items-center gap-1 sm:gap-2">
+                    <div className="bg-gray-800 text-white px-2 sm:px-4 py-1 sm:py-3 rounded-lg text-center min-w-[45px] sm:min-w-[60px]">
+                      <div className="text-base sm:text-2xl font-bold">
+                        {formatTime(timeLeft[unit])}
+                      </div>
+                      <div className="text-[10px] sm:text-xs text-gray-400 capitalize">
+                        {unit}
+                      </div>
+                    </div>
+                    {i < 2 && (
+                      <div className="text-base sm:text-2xl font-bold text-gray-600">
+                        :
+                      </div>
+                    )}
                   </div>
-                  <div className="text-2xl font-bold text-gray-600 flex items-center">:</div>
-                  <div className="bg-gray-800 text-white px-4 py-3 rounded-lg text-center min-w-[60px]">
-                    <div className="text-2xl font-bold">{formatTime(timeLeft.minutes)}</div>
-                    <div className="text-xs text-gray-400">Minutes</div>
-                  </div>
-                  <div className="text-2xl font-bold text-gray-600 flex items-center">:</div>
-                  <div className="bg-gray-800 text-white px-4 py-3 rounded-lg text-center min-w-[60px]">
-                    <div className="text-2xl font-bold">{formatTime(timeLeft.seconds)}</div>
-                    <div className="text-xs text-gray-400">Seconds</div>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
